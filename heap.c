@@ -17,12 +17,19 @@
  */
 void heapSort(Employee *A, int n)
 {
-	// TODO - BuildHeap on the heap
+	buildHeap(A, n);
 
-	// TODO - while n > 0:
-	// TODO - swap A[n-1] with A[0], since A[0] is the smallest number.
-	// TODO - A[n-1] now sorted in place, so decrement n
-	// TODO - Heapify the elements from A[0] up to A[n-1] (which leaves the newly sorted element alone)
+	while(n > 0){
+		swap(&A[n - 1], &A[0]);
+		//printList(A, size);
+		n--;
+
+
+		for(int i = 0; i < n - 1; i++){
+			heapify(A, i, n);
+		}
+
+	}
 }
 
 /**
@@ -35,7 +42,9 @@ void heapSort(Employee *A, int n)
  */
 void buildHeap(Employee *A, int n)
 {
-	// TODO - heapify() every element from A[n/2] down-to A[0]
+	for(int i = n/2; i >= 0; i--){
+		heapify(A, i, n);
+	}
 }
 
 /**
@@ -48,15 +57,64 @@ void buildHeap(Employee *A, int n)
  */
 void heapify(Employee *A, int i, int n)
 {
-	// TODO - get index of left child of element i
-	// TODO - get index of right child of element i
+	
+	//calculate left child index
+	int li = (2 * (i + 1)) -1;
+	//calculate right child index
+	int ri = (2 * (i + 1)); 
 
-	// TODO - determine which child has a smaller salary. We'll call the index of this
-	//		element: "smaller"
+	//if node has no children, break out of method
+	if(li >= n && ri >= n){
+		return;
+	}
 
-	// TODO - recursively check if the salary at A[i] > the salary at A[smaller]. If it is, swap the two.
-	//			Then recursively heapify A[smaller].
-	// TODO - Continue recursion as long as i is within range AND either right_child and left_child are still within range.
+	//get left child
+	Employee leftChild = A[li];
+
+	//get right child
+	Employee rightChild = A[ri];
+
+	//smaller child element
+	Employee smallerEle;
+	//index of smaller element
+	int smaller;
+
+	//if A[i] is not smaller than children, do nothing
+	if(A[i].salary <= leftChild.salary && A[i].salary <= rightChild.salary){
+		return;
+	}
+	else{
+		//if there is only one child, the left node, set leftChild to smaller
+		if(ri >= n){
+			smallerEle = leftChild;
+			smaller = li;
+		}
+		// //if there is only one child, the right node
+		// else if(li >= n){
+		// 	smallerEle = rightChild;
+		// 	smaller = ri;
+		// }
+		//if both children exist:
+		else if(leftChild.salary <= rightChild.salary){
+			smallerEle = leftChild;
+			smaller = li;
+		}
+		else{
+			smallerEle = rightChild;
+			smaller = ri;
+		}
+		//swap elements
+		if(A[i].salary > smallerEle.salary){
+			Employee temp = A[i];
+			A[i] = smallerEle;
+			A[smaller] = temp;
+
+			//recursively call heapify()
+			heapify(A, smaller, n);
+			//stop when A[i].salary is smaller than it's children
+		}
+	}
+
 }
 
 /**
@@ -66,7 +124,15 @@ void heapify(Employee *A, int i, int n)
  */
 void swap(Employee *e1, Employee *e2)
 {
-	// TODO
+	//temp gets the content of e1 (since e1 is deref'd)
+	Employee temp = *e1;
+	
+	//put content of e2 into content e1 (since e1 and e2 are deref'd)
+	*e1 = *e2;
+	
+	//puts content of e1 into content e2 (since e2 is deref'd)
+	*e2 = temp;
+	
 }
 
 /**
@@ -76,5 +142,9 @@ void swap(Employee *e1, Employee *e2)
  */
 void printList(Employee *A, int n)
 {
-	// TODO
+	for(int i = 0; i < n; i++){
+		printf("[id=%s ", A[i].name);
+		printf("sal=%d]  ", A[i].salary);
+	}
+	printf("\n\n");
 }
